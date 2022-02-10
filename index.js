@@ -137,7 +137,7 @@ async function run() {
             let result ;
             for(data of dataarr){
                 if(data.status === 'active'){
-                    const filter = { status: 'active' };
+                    const filter = { roll: data.roll};
                     const updateDoc = {
                       $set: {
                         status: 'inActive'
@@ -147,7 +147,7 @@ async function run() {
                     
                 }
                 else{
-                    const filter = { status: 'inActive' };
+                    const filter = { roll: data.roll };
                     const updateDoc = {
                       $set: {
                         status: 'active'
