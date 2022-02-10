@@ -21,6 +21,7 @@ async function run() {
         const database = client.db('HostelDB');
         const Student = database.collection('Student');
         const FoodItem = database.collection('FooodItem');
+        const Distribution =  database.collection('Distribution')
 
         app.post('/foodpost', async (req, res) => {
             const data = req.body;
@@ -130,9 +131,59 @@ async function run() {
             const result = await Student.updateOne(filter, updatedoc, option)
             res.send(result)
         })
+
+        app.put('/changeStatus', async (req, res) => {
+            const dataarr = req.body;
+            let result ;
+            for(data of dataarr){
+                if(data.status === 'active'){
+                    const filter = { status: 'active' };
+                    const updateDoc = {
+                      $set: {
+                        status: 'inActive'
+                      },
+                    };
+                     result = await Student.updateMany(filter, updateDoc);
+                    
+                }
+                else{
+                    const filter = { status: 'inActive' };
+                    const updateDoc = {
+                      $set: {
+                        status: 'active'
+                      },
+                    };
+                     result = await Student.updateMany(filter, updateDoc); 
+                }
+            }
+            res.json(result)
+        })
+
+        app.post('/foodlistpost', async (req, res) => {
+            const data = req.body
+            const result = await Distribution.insertOne(data)
+            res.json(result)
+        })
+        app.get('/getAllstudent', async (req, res) => {
+            const cursor = Distribution.find({})
+            const result = await cursor.toArray();
+            res.send(result)
+        })
+
+        app.get('/getSearchStudent/:roll', async (req, res) => {
+            const roll = req.params.roll;
+            const query = {roll: roll}
+            const result = await Student.findOne(query)
+            res.send(result)
+        })
+        app.get('/getfoodList', async (req, res) => {
+            const cursor = FoodItem.find({})
+            const result = await cursor.toArray();
+            res.send(result)
+        })
     }  
     finally{
-          
+        
     }
 }
 run().catch(console.dir)
